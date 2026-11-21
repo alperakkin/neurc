@@ -1,6 +1,11 @@
 #include "matrix.h"
 
 
+m_double square(m_double val)
+{
+    return val*val;
+}
+
 int main()
 {
 
@@ -12,16 +17,16 @@ int main()
 
 
     Matrix *m1 = mat_create(3, 2, arr1);
-    Matrix *res  = mat_create(2, 3, NULL);
+   
 
     
-    transpose(m1, res);
+    map(m1, square);
     mat_print(m1);
-    mat_print(res);
+    
 
 
     mat_destroy(m1);
-    mat_destroy(res);
+  
    
 
     return NEURC_OK;

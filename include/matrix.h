@@ -46,5 +46,6 @@ void mat_multiply_scalar(Matrix *a,  m_double s);
 void hadamard(Matrix *a, const Matrix *b);
 void matmul(const Matrix *a, const Matrix *b, Matrix *result);
 void transpose(const Matrix *a, Matrix *result);
+void map(Matrix *m, m_double (*func)(m_double));
 
 #endif

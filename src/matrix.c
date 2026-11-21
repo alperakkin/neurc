@@ -228,5 +228,12 @@ void transpose(const Matrix *a, Matrix *result)
 
     }
 
+}
 
+void map(Matrix *m, m_double (*func)(m_double))
+{
+    assert_matrix_is_allocated(m);
+    for(size_t index=0; index<get_size(m); index++)
+        m->data[index] = func(m->data[index]);
+    
 }
