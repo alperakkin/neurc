@@ -21,4 +21,9 @@ typedef enum {
 } ErrorTypes;
 
 
+Matrix *create_matrix(size_t rows, size_t cols);
+void destroy_matrix(Matrix *matrix);
+void print_error(ErrorTypes err_index);
+void print_matrix(Matrix *m);
+
 #endif

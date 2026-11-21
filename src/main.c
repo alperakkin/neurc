@@ -3,6 +3,9 @@
 
 int main()
 {
-    printf("Helo neurc\n");
+
+    Matrix *m = create_matrix(2,3);
+    print_matrix(m);
+    destroy_matrix(m);
     return 0;
 }
