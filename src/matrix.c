@@ -20,7 +20,7 @@ void print_error(ErrorTypes err_index)
     
 }
 
-Matrix *create_matrix(size_t rows, size_t cols)
+Matrix *mat_create(size_t rows, size_t cols)
 {
 
     if(rows==0 || cols==0)
@@ -43,23 +43,24 @@ Matrix *create_matrix(size_t rows, size_t cols)
     }
     matrix->col_size = cols;
     matrix->row_size = rows;
-    matrix->data = calloc(cols*rows, sizeof(double));
+    matrix->data = calloc(cols*rows, sizeof(m_double));
     return matrix;
 
 }
 
-void destroy_matrix(Matrix *m)
+ErrorTypes mat_destroy(Matrix *m)
 {
-    if(m == NULL) return;
+    if(m == NULL) return NEURC_ALLOC_ERROR;
     free(m->data);
     free(m);
+    return NEURC_OK;
 }
 
-void print_matrix(Matrix *m)
+ErrorTypes mat_print(const Matrix *m)
 {
       if(m == NULL) {
         print_error(NEURC_ALLOC_ERROR);
-        return;
+        return NEURC_ALLOC_ERROR;
       };
 
       printf("Matrix has shape (%zux%zu)\n", m->row_size, m->col_size);
@@ -72,4 +73,6 @@ void print_matrix(Matrix *m)
         printf("\n");
       }
       printf("]\n");
+
+      return NEURC_OK;
 }

@@ -4,8 +4,24 @@
 int main()
 {
 
-    Matrix *m = create_matrix(2,3);
-    print_matrix(m);
-    destroy_matrix(m);
+    Matrix *m = mat_create(2,3);
+    if (m == NULL)
+    {
+        print_error(NEURC_ALLOC_ERROR);
+        return NEURC_ALLOC_ERROR;
+    }
+    ErrorTypes err = mat_print(m);
+    if (err) 
+    {
+        print_error(err);
+        return err;
+    }
+
+    err = mat_destroy(m);
+    if(err)
+    {
+        print_error(err);
+        return err;
+    }
     return 0;
 }
