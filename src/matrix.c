@@ -5,19 +5,22 @@
 
 void panic(ErrorTypes err_index)
 {
+    fprintf(stderr, "\033[31mERROR: ");   
     switch (err_index)
     {
+   
     case NEURC_INCORRECT_ARGS:
-        fprintf(stderr, "Incorrent Matrix Arguments\n");
+        fprintf(stderr, "Incorrect Matrix Arguments");
         break;
     case NEURC_INCORRECT_SHAPE:
-        fprintf(stderr, "Incorrent Matrix Shape\n");
+        fprintf(stderr, "Incorrect Matrix Shape");
         break;
     
     default:
+        fprintf(stderr, "Undefined Error");
         break;
     }
-    
+    fprintf(stderr, "\033[0m\n");
     exit(err_index);
 }
 
@@ -75,9 +78,26 @@ void mat_print(const Matrix *m)
 
 }
 
-m_double get_element(const Matrix *m, size_t row, size_t col)
+void assert_matrix_is_allocated(const Matrix *m)
 {
     if(m == NULL) panic(NEURC_ALLOC_ERROR);
+}
+
+void assert_matrixes_have_identical_shape(const Matrix *a, const Matrix *b)
+{
+    if (a->col_size != b->col_size || a->row_size != b->row_size) panic(NEURC_INCORRECT_SHAPE);
+}
+
+size_t get_size(const Matrix *m)
+{
+    assert_matrix_is_allocated(m);
+
+    return m->col_size * m->row_size;
+}
+
+m_double get_element(const Matrix *m, size_t row, size_t col)
+{
+    assert_matrix_is_allocated(m);
     if(row > m->row_size || col > m->col_size) panic(NEURC_INCORRECT_SHAPE);
 
 
@@ -86,9 +106,20 @@ m_double get_element(const Matrix *m, size_t row, size_t col)
 }
 void set_element(m_double value, Matrix *m, size_t row, size_t col)
 {
-    if(m == NULL) panic(NEURC_ALLOC_ERROR);
+    assert_matrix_is_allocated(m);
     if(row > m->row_size || col > m->col_size) panic(NEURC_INCORRECT_SHAPE);
     m->data[row * m->col_size + col] = value;
 
 }
-void mat_add(Matrix *a, const Matrix *b);
+void mat_add(Matrix *a, const Matrix *b)
+{
+    assert_matrix_is_allocated(a);
+    assert_matrix_is_allocated(b);
+    assert_matrixes_have_identical_shape(a, b);
+
+    for(size_t index=0; index < get_size(a); index++)
+    {
+        a->data[index] += b->data[index];
+    }
+
+}

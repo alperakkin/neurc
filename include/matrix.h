@@ -27,6 +27,13 @@ void panic(ErrorTypes err_index);
 void mat_print(const Matrix *m);
 m_double get_element(const Matrix *m, size_t row, size_t col);
 void set_element(m_double value, Matrix *m, size_t row, size_t col);
+size_t get_size(const Matrix *m);
+
+
+void assert_matrix_is_allocated(const Matrix *m);
+void assert_matrixes_have_identical_shape(const Matrix *a, const Matrix *b);
+
+
 void mat_add(Matrix *a, const Matrix *b);
 void mat_sub(Matrix *a, const Matrix *b);
 void mat_add_scalar(Matrix *a,  m_double s);
