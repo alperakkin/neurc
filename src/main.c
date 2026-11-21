@@ -1,29 +1,37 @@
-#include <stdio.h>
 #include "matrix.h"
+
 
 int main()
 {
 
-    Matrix *m = mat_create(2,3);
-    Matrix *m2 = mat_create(2,3);
-  
-    for (int col=0; col<3 ; col++)
-    {
+    m_double arr1[6] = {
+        1, 1, 1,
+        2, 2, 2,
+    };
 
-        set_element((m_double)(col+1), m, 1, col);
-        set_element((m_double)(col+2), m2, 1, col);
-    }
-  
+    m_double arr2[8] = {
+        3, 3,
+        3, 3,
+        3, 3,
+        3, 3,
+    };
+
+    Matrix *m1 = mat_create(3, 2, &arr1);
+    Matrix *m2 = mat_create(2, 4, &arr2);
+    Matrix *res  = mat_create(3, 4, NULL);
+
     
-    mat_add(m, m2);
-    
-    mat_print(m);
+    matmul(m1, m2, res);
+    mat_print(m1);
+    mat_print(m2);
+    mat_print(res);
 
 
-
-
-    mat_destroy(m);
+    mat_destroy(m1);
+    mat_destroy(m2);
+    mat_destroy(res);
    
 
     return NEURC_OK;
 }
+
