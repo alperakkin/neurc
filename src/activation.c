@@ -30,6 +30,12 @@ double derive_tanh_func(double val)
  return (double) 1 - (tanh_func(val) * tanh_func(val));
 }
 
+double derive_relu_func(double val)
+{
+    if (val<0) return 0;
+    return 1;
+}
+
 void softmax_func(Matrix *m)
 {
     for (size_t row=0; row< m->row_size; row++)

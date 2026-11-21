@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 #include "matrix.h"
+#include "errors.h"
 
 typedef enum {
     SIGMOID,
@@ -16,6 +17,7 @@ typedef enum {
 typedef struct {
     size_t input_count;
     size_t output_count;
+    size_t batch_size;
     Matrix *weights;
     Matrix *bias;
     Matrix *stored_input;
@@ -24,9 +26,12 @@ typedef struct {
     Activations activation_type;
     m_double (*activation_function)(m_double);
     m_double (*derivative_function)(m_double);
-
-
 } Layer;
 
+Layer *create_layer(size_t input_count, size_t output_count, size_t batch_size, Activations activation_func);
+void assign_activation(Layer *layer, Activations activation);
+void assert_created_layer(Layer *layer);
+void destroy_layer(Layer *layer);
+void print_layer(Layer *layer);
 
 #endif

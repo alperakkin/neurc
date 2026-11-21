@@ -2,38 +2,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-
+#include "errors.h"
 
 #include "matrix.h"
 
-void panic(const Matrix *a, const Matrix *b, ErrorTypes err_index)
-{
-    fprintf(stderr, "\033[31mERROR: \n");
-    print_size("First Matrix - ", a);  
-    print_size("Second Matrix - ", b);   
-    switch (err_index)
-    {
-   
-    case NEURC_INCORRECT_ARGS:
-        fprintf(stderr, "Incorrect Matrix Arguments");
-        break;
-    case NEURC_INCORRECT_SHAPE:
-        fprintf(stderr, "Incorrect Matrix Shape");
-        break;
-    
-    case NEURC_INCORRECT_SIZE:
-        fprintf(stderr, "Incorrect Matrix Size");
-        break;
-    case NEURC_MATMUL_NOT_MATCHED:
-        fprintf(stderr, "Matrix columns not matched for MATMUL operations");
-        break;   
-    default:
-        fprintf(stderr, "Undefined Error");
-        break;
-    }
-    fprintf(stderr, "\033[0m\n");
-    exit(err_index);
-}
 
 void print_size(char* name, const Matrix *m)
 {
@@ -43,11 +15,11 @@ void print_size(char* name, const Matrix *m)
 Matrix *mat_create(size_t rows, size_t cols,const m_double *data)
 {
 
-    if(rows==0 || cols==0) panic(NULL,NULL, NEURC_INCORRECT_SHAPE); 
-    if (rows * cols > SIZE_MAX) panic(NULL, NULL, NEURC_INCORRECT_SIZE);
+    if(rows==0 || cols==0) panic("Create Matrix", NEURC_INCORRECT_SHAPE); 
+    if (rows * cols > SIZE_MAX) panic("Create Matrix", NEURC_INCORRECT_SIZE);
        
     Matrix *matrix = calloc(1, sizeof(Matrix));
-    if (matrix == NULL) panic(NULL,NULL, NEURC_ALLOC_ERROR);
+    if (matrix == NULL) panic("Create Matrix:", NEURC_ALLOC_ERROR);
       
     
     matrix->col_size = cols;
@@ -62,7 +34,7 @@ Matrix *mat_copy(Matrix *src)
 {
     assert_matrix_is_allocated(src);
     Matrix * dest = mat_create(src->row_size, src->col_size, src->data);
-    if(dest == NULL) panic(dest, NULL, NEURC_ALLOC_ERROR);
+    if(dest == NULL) panic("Copy Matrix", NEURC_ALLOC_ERROR);
     return dest;
 
 }
@@ -75,24 +47,25 @@ void fill(Matrix *m, double val)
         m->data[index] -= val;
     
 }
-void random_fill(Matrix *m)
+void random_fill(Matrix *m, m_double min, m_double max)
 {
-
     assert_matrix_is_allocated(m);
-    for (int i = 0; i < 10; i++) {
-        rand();
-    } // skipping initialization correlation
+    for(size_t index=0; index < get_size(m); index++){
 
+    
 
-    for(size_t index=0; index < get_size(m); index++)
-        m->data[index] = (double)rand()/RAND_MAX;
+        m_double rand_val = (double)rand() / RAND_MAX;
+        rand_val = min + (max - min) * rand_val;
+       
+        m->data[index] = rand_val;
+    }
     
 
 }
 
 void mat_destroy(Matrix *m)
 {
-    if(m == NULL)  panic(m, NULL, NEURC_ALLOC_ERROR);
+    if(m == NULL)  panic("Destroy Matrix", NEURC_ALLOC_ERROR);
     free(m->data);
     free(m);
 
@@ -118,22 +91,22 @@ void mat_print(const Matrix *m)
 
 void assert_matrix_is_allocated(const Matrix *m)
 {
-    if(m == NULL) panic(m, NULL, NEURC_ALLOC_ERROR);
+    if(m == NULL) panic("Assert Matrix Allocated", NEURC_ALLOC_ERROR);
 }
 
 void assert_matrixes_have_identical_shape(const Matrix *a, const Matrix *b)
 {
-    if (a->col_size != b->col_size || a->row_size != b->row_size) panic(a, b, NEURC_INCORRECT_SHAPE);
+    if (a->col_size != b->col_size || a->row_size != b->row_size) panic("Assert Matrix Has Identical Shape", NEURC_INCORRECT_SHAPE);
 }
 
 void assert_matmul_shapes(const Matrix * a, const Matrix *b)
 {
-    if (a->col_size != b->row_size) panic(a, b, NEURC_MATMUL_NOT_MATCHED);
+    if (a->col_size != b->row_size) panic("Assert Matrix Matmul Shape", NEURC_MATMUL_NOT_MATCHED);
 }
 
 void assert_matrix_size(const Matrix *m , size_t row, size_t col)
 {
-    if (m->col_size != col || m->row_size != row) panic(m, NULL, NEURC_INCORRECT_SIZE);
+    if (m->col_size != col || m->row_size != row) panic("Assert Matrix Size", NEURC_INCORRECT_SIZE);
 }
 size_t get_size(const Matrix *m)
 {
@@ -145,7 +118,7 @@ size_t get_size(const Matrix *m)
 m_double get_element(const Matrix *m, size_t row, size_t col)
 {
     assert_matrix_is_allocated(m);
-    if(row > m->row_size || col > m->col_size) panic(m, NULL, NEURC_INCORRECT_SHAPE);
+    if(row > m->row_size || col > m->col_size) panic("Get Matrix Element", NEURC_INCORRECT_SHAPE);
 
 
     return m->data[m->col_size * row + col];
@@ -154,7 +127,7 @@ m_double get_element(const Matrix *m, size_t row, size_t col)
 void set_element(m_double value, Matrix *m, size_t row, size_t col)
 {
     assert_matrix_is_allocated(m);
-    if(row > m->row_size || col > m->col_size) panic(m, NULL, NEURC_INCORRECT_SHAPE);
+    if(row > m->row_size || col > m->col_size) panic("Set Matrix Element", NEURC_INCORRECT_SHAPE);
     m->data[row * m->col_size + col] = value;
 
 }
