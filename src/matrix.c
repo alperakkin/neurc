@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include "matrix.h"
 
-void print_error(ErrorTypes err_index)
+void panic(ErrorTypes err_index)
 {
     switch (err_index)
     {
@@ -18,6 +18,7 @@ void print_error(ErrorTypes err_index)
         break;
     }
     
+    exit(err_index);
 }
 
 Matrix *mat_create(size_t rows, size_t cols)
@@ -25,20 +26,20 @@ Matrix *mat_create(size_t rows, size_t cols)
 
     if(rows==0 || cols==0)
     {
-        print_error(NEURC_INCORRECT_SHAPE);
+        panic(NEURC_INCORRECT_SHAPE);
         return NULL;
      
     }
 
     if (rows * cols > SIZE_MAX)
     {
-        print_error(NEURC_INCORRECT_SHAPE);
+        panic(NEURC_INCORRECT_SHAPE);
         return NULL;
       
     }
     Matrix *matrix = calloc(1, sizeof(Matrix));
     if (matrix == NULL){
-        print_error(NEURC_ALLOC_ERROR);
+        panic(NEURC_ALLOC_ERROR);
         return NULL;
     }
     matrix->col_size = cols;
@@ -48,20 +49,18 @@ Matrix *mat_create(size_t rows, size_t cols)
 
 }
 
-ErrorTypes mat_destroy(Matrix *m)
+void mat_destroy(Matrix *m)
 {
-    if(m == NULL) return NEURC_ALLOC_ERROR;
+    if(m == NULL)  panic(NEURC_ALLOC_ERROR);
     free(m->data);
     free(m);
-    return NEURC_OK;
+
 }
 
-ErrorTypes mat_print(const Matrix *m)
+void mat_print(const Matrix *m)
 {
-      if(m == NULL) {
-        print_error(NEURC_ALLOC_ERROR);
-        return NEURC_ALLOC_ERROR;
-      };
+      if(m == NULL)  panic(NEURC_ALLOC_ERROR);
+  
 
       printf("Matrix has shape (%zux%zu)\n", m->row_size, m->col_size);
       printf("--------------------------------------------\n");
@@ -74,5 +73,22 @@ ErrorTypes mat_print(const Matrix *m)
       }
       printf("]\n");
 
-      return NEURC_OK;
 }
+
+m_double get_element(const Matrix *m, size_t row, size_t col)
+{
+    if(m == NULL) panic(NEURC_ALLOC_ERROR);
+    if(row > m->row_size || col > m->col_size) panic(NEURC_INCORRECT_SHAPE);
+
+
+    return m->data[m->col_size * row + col];
+
+}
+void set_element(m_double value, Matrix *m, size_t row, size_t col)
+{
+    if(m == NULL) panic(NEURC_ALLOC_ERROR);
+    if(row > m->row_size || col > m->col_size) panic(NEURC_INCORRECT_SHAPE);
+    m->data[row * m->col_size + col] = value;
+
+}
+void mat_add(Matrix *a, const Matrix *b);
