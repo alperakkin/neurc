@@ -1,5 +1,8 @@
+#include <stdlib.h>
+#include <time.h>
 #include "matrix.h"
 #include "activation.h"
+#include "layer.h"
 
 #define ROW 4
 #define COL 3
@@ -14,27 +17,29 @@ m_double square(m_double val)
 
 int main()
 {
+    srand((unsigned int)time(NULL)); 
+  
 
-    m_double arr1[ROW*COL] = {
-        0, 0.1, 0.2,
-        0.3, 0.4, 0.5,
-        -0.6, 0.7, 0.8,
-        -500,2000,100
+    Matrix *m1 = mat_create(ROW, COL, NULL);
+    random_fill(m1);  
+    
+    double bias_arr[3] = {
+        10, 20 , 30
     };
 
-
-
-    Matrix *m1 = mat_create(ROW, COL, arr1);
-   
-
+    Matrix *bias = mat_create(1, 3, bias_arr);
     
     //map(m1, tanh_func);
-    softmax_func(m1);
+    //softmax_func(m1);
+    mat_print(m1);
+    mat_print(bias);
+    add_bias(m1, bias);
     mat_print(m1);
     
 
 
     mat_destroy(m1);
+    mat_destroy(bias);
   
    
 

@@ -1,6 +1,7 @@
 #include <math.h>
+#include <stddef.h>
 #include "activation.h"
-#include "matrix.h"
+
 
 double sigmoid_func(double val)
 {
@@ -18,6 +19,15 @@ double tanh_func(double val)
     // (exp(x) - exp(-x)) / (exp(x) + exp(-x))
     return (double)tanh(val);
 
+}
+
+double derive_sigmoid_func(double val)
+{
+    return (double) sigmoid_func(val) * (1-sigmoid_func(val));
+}
+double derive_tanh_func(double val)
+{
+ return (double) 1 - (tanh_func(val) * tanh_func(val));
 }
 
 void softmax_func(Matrix *m)

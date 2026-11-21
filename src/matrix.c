@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+
+
 #include "matrix.h"
 
 void panic(const Matrix *a, const Matrix *b, ErrorTypes err_index)
@@ -53,6 +55,38 @@ Matrix *mat_create(size_t rows, size_t cols,const m_double *data)
     matrix->data = calloc(cols*rows, sizeof(m_double));
     if (data != NULL) memcpy(matrix->data, data, sizeof(m_double)*get_size(matrix));
     return matrix;
+
+}
+
+Matrix *mat_copy(Matrix *src)
+{
+    assert_matrix_is_allocated(src);
+    Matrix * dest = mat_create(src->row_size, src->col_size, src->data);
+    if(dest == NULL) panic(dest, NULL, NEURC_ALLOC_ERROR);
+    return dest;
+
+}
+
+void fill(Matrix *m, double val)
+{
+    assert_matrix_is_allocated(m);
+
+    for(size_t index=0; index < get_size(m); index++)
+        m->data[index] -= val;
+    
+}
+void random_fill(Matrix *m)
+{
+
+    assert_matrix_is_allocated(m);
+    for (int i = 0; i < 10; i++) {
+        rand();
+    } // skipping initialization correlation
+
+
+    for(size_t index=0; index < get_size(m); index++)
+        m->data[index] = (double)rand()/RAND_MAX;
+    
 
 }
 
@@ -222,7 +256,7 @@ void transpose(const Matrix *a, Matrix *result)
     {
         for(size_t col=0; col<a->col_size; col++)
         {
-            printf("Element is: %f\n", get_element(a, row, col));
+            
             set_element(get_element(a, row, col), result, col, row);
         }
 
@@ -236,4 +270,25 @@ void map(Matrix *m, m_double (*func)(m_double))
     for(size_t index=0; index<get_size(m); index++)
         m->data[index] = func(m->data[index]);
     
+}
+
+void add_bias(Matrix *m, Matrix *b)
+{
+    assert_matrix_is_allocated(m);
+    assert_matrix_is_allocated(b);
+    assert_matrix_size(b, 1, m->col_size);
+
+    for(size_t row=0; row<m->row_size; row++)
+    {
+        for(size_t col=0; col<m->col_size; col++)
+        {
+            m_double biased = get_element(m, row, col) + get_element(b, 0, col);
+           
+            set_element(biased, m, row, col);
+        }
+
+    }
+    
+
+
 }
