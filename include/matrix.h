@@ -23,7 +23,7 @@ typedef enum {
 } ErrorTypes;
 
 
-Matrix *mat_create(size_t rows, size_t cols, m_double* data);
+Matrix *mat_create(size_t rows, size_t cols, const m_double* data);
 
 void mat_destroy(Matrix *matrix);
 void mat_print(const Matrix *m);
@@ -45,6 +45,6 @@ void mat_sub_scalar(Matrix *a,  m_double s);
 void mat_multiply_scalar(Matrix *a,  m_double s);
 void hadamard(Matrix *a, const Matrix *b);
 void matmul(const Matrix *a, const Matrix *b, Matrix *result);
-Matrix *transpose(const Matrix *a);
+void transpose(const Matrix *a, Matrix *result);
 
 #endif

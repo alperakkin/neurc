@@ -38,7 +38,7 @@ void print_size(char* name, const Matrix *m)
     if(m == NULL) return;
     printf("%s Shape: (%zu, %zu)\n", name, m->row_size, m->col_size);
 }
-Matrix *mat_create(size_t rows, size_t cols, m_double *data)
+Matrix *mat_create(size_t rows, size_t cols,const m_double *data)
 {
 
     if(rows==0 || cols==0) panic(NULL,NULL, NEURC_INCORRECT_SHAPE); 
@@ -209,5 +209,24 @@ void matmul(const Matrix *a, const Matrix *b, Matrix *result)
         }
 
     }
+
+}
+
+void transpose(const Matrix *a, Matrix *result)
+{
+    assert_matrix_is_allocated(a);
+    assert_matrix_is_allocated(result);
+    assert_matrix_size(a, result->col_size, result->row_size);
+
+    for(size_t row=0; row<a->row_size; row++)
+    {
+        for(size_t col=0; col<a->col_size; col++)
+        {
+            printf("Element is: %f\n", get_element(a, row, col));
+            set_element(get_element(a, row, col), result, col, row);
+        }
+
+    }
+
 
 }
