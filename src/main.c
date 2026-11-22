@@ -6,6 +6,9 @@
 #include <stdio.h>
 #include <stdbool.h>
 
+#define EPOCHS  500
+#define LR 0.001
+
 int main()
 {
 
@@ -23,16 +26,19 @@ int main()
     Layer *layer = create_layer(2, 1, 1, SIGMOID);
     
 
+    for(size_t epoch=0; epoch<EPOCHS; epoch++)
+    {
+        
     forward(layer, input);
-    
-    
     m_double loss = mean_square_error(layer->post_activation, target);
     print_loss(loss); 
     gradient_loss(layer->post_activation, target, gradient);
     backward(layer, gradient);
     update(layer, 0.51);
  
-    print_layer(layer, true);
+    print_layer(layer,epoch,loss, false);
+    }
+
 
 
 

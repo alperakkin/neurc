@@ -32,7 +32,7 @@ void assign_activation(Layer *layer);
 void assert_created_layer(Layer *layer);
 void destroy_layer(Layer *layer);
 void print_activation_type(Activations type);
-void print_layer(const Layer *layer, int show_matrices);
+void print_layer(const Layer *layer,size_t epoch, m_double loss, int show_matrices);
 
 void forward(Layer *layer, const Matrix *input);
 void backward(Layer *layer, Matrix *gradient);

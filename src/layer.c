@@ -164,25 +164,41 @@ static void print_matrix_summary(const char *label, const Matrix *m, const char 
     printf("\n");
 }
 
-void print_layer(const Layer *layer, int show_matrices)
+void print_layer(const Layer *layer,size_t epoch, m_double loss, int show_matrices)
 {
-    if (!layer) {
+if (!layer) {
         printf(ANSI_RED "[Error: NULL Layer]\n" ANSI_RESET);
         return;
     }
 
     size_t total_params = (layer->input_count * layer->output_count) + layer->output_count;
 
-
     printf(ANSI_CYAN ANSI_BOLD "╭──────────────────────────────────────────────────────────────────────────────╮\n");
-    printf("│ LAYER SUMMARY  │  Shape: (%zu ──▶ %zu)  │  Batch: %-4zu  │  Params: %-9zu  │\n",
-           layer->input_count, layer->output_count, layer->batch_size, total_params);
+    printf("│ EPOCH: %-6zu │ LOSS: ", epoch);
+    
+
+    if (isnan(loss) || isinf(loss)) {
+        printf(ANSI_RED "%-12.6f" ANSI_CYAN, (double)loss);
+    } else {
+        printf(ANSI_YELLOW "%-12.6f" ANSI_CYAN, (double)loss);
+    }
+    
+    printf(" │ Shape: (%zu ──▶ %zu) │ Params: %-9zu │\n",
+           layer->input_count, layer->output_count, total_params);
     printf("╰──────────────────────────────────────────────────────────────────────────────╯\n" ANSI_RESET);
 
     printf("  ");
-    print_activation_type(layer->activation_type);
-    printf(ANSI_DIM "  ────────────────────────────────────────────────────────────────────────────\n" ANSI_RESET);
+    printf(ANSI_BOLD "Activation : " ANSI_RESET);
+    switch (layer->activation_type) {
+        case SIGMOID: printf(ANSI_GREEN "%-10s" ANSI_RESET, "SIGMOID"); break;
+        case RELU:    printf(ANSI_GREEN "%-10s" ANSI_RESET, "RELU");    break;
+        case TANH:    printf(ANSI_GREEN "%-10s" ANSI_RESET, "TANH");    break;
+        case SOFTMAX: printf(ANSI_GREEN "%-10s" ANSI_RESET, "SOFTMAX"); break;
+        default:      printf(ANSI_RED   "%-10s" ANSI_RESET, "Undefined"); break;
+    }
 
+    printf(" │  " ANSI_BOLD "Batch Size : " ANSI_RESET ANSI_YELLOW "%zu\n" ANSI_RESET, layer->batch_size);
+    printf(ANSI_DIM "  ────────────────────────────────────────────────────────────────────────────\n" ANSI_RESET);
     if (!show_matrices) {
        
         print_matrix_summary("Weights",         layer->weights,         ANSI_MAGENTA);
