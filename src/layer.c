@@ -101,7 +101,7 @@ void print_activation_type(Activations type)
 
 void print_layer(Layer *layer)
 {
-    printf("Layer: Shape(%zu,%zu) - Batch size: (%zu) - \n", layer->input_count, layer->output_count, layer->batch_size);
+    printf("Layer: Shape(%zu,%zu) - Batch size: (%zu)\n", layer->input_count, layer->output_count, layer->batch_size);
     printf("--------------------------------------------------------------------\n");
     print_activation_type(layer->activation_type);
     printf("--------------------------------------------------------------------\n");

@@ -1,29 +1,39 @@
 
 #include "errors.h"
 #include "layer.h"
+#include "loss.h"
 #include "utils.h"
+#include <stdio.h>
 
 int main()
 {
 
     seed(0);
-    m_double XOR[8] = {
-        0, 0,
-        0, 1,
-        1, 0,
-        1, 1
+    m_double inp_arr[2] = {
+        0.9, 0.2
+    };
+    m_double target_arr[1] = {
+        1
     };
 
-    Matrix *input = mat_create(4, 2, XOR);
+    Matrix *input = mat_create(1, 2, inp_arr);
+    Matrix *target = mat_create(1, 1, target_arr);
+    Layer *layer = create_layer(2, 1, 1, SIGMOID);
+    
 
-    Layer *layer = create_layer(2, 1, 4, SIGMOID);
-    fill(layer->bias, 0.25f);
     forward(layer, input);
-
+    
+    
     print_layer(layer);
+    m_double loss = mean_square_error(layer->post_activation, target);
+    print_loss(loss); 
+
+
+
+    //cleanup
     destroy_layer(layer);
     mat_destroy(input);
+    mat_destroy(target);
 
     return NEURC_OK;
 }
-

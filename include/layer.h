@@ -4,14 +4,9 @@
 #include <stddef.h>
 #include "matrix.h"
 #include "errors.h"
+#include "activation.h"
 
-typedef enum {
-    SIGMOID,
-    RELU,
-    TANH,
-    SOFTMAX
 
-} Activations;
 
 
 typedef struct {
@@ -36,5 +31,6 @@ void print_activation_type(Activations type);
 void print_layer(Layer *layer);
 
 void forward(Layer *layer, const Matrix *input);
+
 
 #endif

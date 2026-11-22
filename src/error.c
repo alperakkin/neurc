@@ -7,11 +7,14 @@ void panic(const char* function_name, ErrorTypes err)
 {
     fprintf(stderr, "\033[31m\n");
     fprintf(stderr, "Error in %s: ", function_name); 
-    
+
     switch (err)
     {
     case NEURC_INCORRECT_ARGS:
         fprintf(stderr, "Incorrect Matrix Arguments");
+        break;
+    case NEURC_ALLOC_ERROR:
+        fprintf(stderr, "Matrix is not allocated");
         break;
     case NEURC_INCORRECT_SHAPE:
         fprintf(stderr, "Incorrect Matrix Shape");

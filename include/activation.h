@@ -10,4 +10,11 @@ double derive_sigmoid_func(double val);
 double derive_tanh_func(double val);
 double derive_relu_func(double val);
 
+typedef enum {
+    SIGMOID,
+    RELU,
+    TANH,
+    SOFTMAX
+
+} Activations;
 #endif
