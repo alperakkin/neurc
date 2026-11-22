@@ -19,7 +19,7 @@ typedef struct {
 Matrix *mat_create(size_t rows, size_t cols, const m_double* data);
 
 void mat_destroy(Matrix *matrix);
-Matrix *mat_copy(Matrix *src);
+void mat_copy(const Matrix *src, Matrix *dest);
 void mat_print(const Matrix *m);
 void print_size(char *name, const Matrix *m);
 void fill(Matrix *m, double val);

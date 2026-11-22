@@ -29,9 +29,12 @@ typedef struct {
 } Layer;
 
 Layer *create_layer(size_t input_count, size_t output_count, size_t batch_size, Activations activation_func);
-void assign_activation(Layer *layer, Activations activation);
+void assign_activation(Layer *layer);
 void assert_created_layer(Layer *layer);
 void destroy_layer(Layer *layer);
+void print_activation_type(Activations type);
 void print_layer(Layer *layer);
+
+void forward(Layer *layer, const Matrix *input);
 
 #endif

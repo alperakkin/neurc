@@ -30,12 +30,12 @@ Matrix *mat_create(size_t rows, size_t cols,const m_double *data)
 
 }
 
-Matrix *mat_copy(Matrix *src)
+void mat_copy(const Matrix *src, Matrix *dest)
 {
     assert_matrix_is_allocated(src);
-    Matrix * dest = mat_create(src->row_size, src->col_size, src->data);
     if(dest == NULL) panic("Copy Matrix", NEURC_ALLOC_ERROR);
-    return dest;
+    memcpy(dest->data, src->data, sizeof(m_double)*src->col_size*src->row_size);
+  
 
 }
 
@@ -44,7 +44,7 @@ void fill(Matrix *m, double val)
     assert_matrix_is_allocated(m);
 
     for(size_t index=0; index < get_size(m); index++)
-        m->data[index] -= val;
+        m->data[index] = val;
     
 }
 void random_fill(Matrix *m, m_double min, m_double max)
