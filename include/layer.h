@@ -18,6 +18,7 @@ typedef struct {
     Matrix *stored_input;
     Matrix *pre_activation;
     Matrix *post_activation;
+    Matrix *delta;
     Activations activation_type;
     m_double (*activation_function)(m_double);
     m_double (*derivative_function)(m_double);
@@ -31,6 +32,7 @@ void print_activation_type(Activations type);
 void print_layer(Layer *layer);
 
 void forward(Layer *layer, const Matrix *input);
+void backward(Layer *layer, Matrix *gradient);
 
 
 #endif

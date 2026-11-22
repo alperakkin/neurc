@@ -2,6 +2,7 @@
 #include "errors.h"
 #include "matrix.h"
 #include "activation.h"
+#include "loss.h"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -18,8 +19,9 @@ Layer *create_layer(size_t input_count, size_t output_count, size_t batch_size, 
     layer->weights = mat_create(input_count, output_count, NULL);
     layer->bias = mat_create(1, output_count, NULL);
     layer->stored_input = mat_create(batch_size, input_count, NULL);
-    layer->pre_activation = mat_create(batch_size,output_count, NULL);
-    layer->post_activation = mat_create(batch_size,output_count, NULL);
+    layer->pre_activation = mat_create(batch_size, output_count, NULL);
+    layer->post_activation = mat_create(batch_size, output_count, NULL);
+    layer->delta = mat_create(batch_size, output_count, NULL);
     layer->activation_type = activation_type;
     assert_created_layer(layer);
     random_fill(layer->weights, -1, 1);
@@ -60,7 +62,8 @@ void assert_created_layer(Layer *layer)
        layer->bias             == NULL ||
        layer->stored_input     == NULL ||
        layer->pre_activation   == NULL ||
-       layer->post_activation  == NULL 
+       layer->post_activation  == NULL ||
+       layer->delta            == NULL
     ) {
         destroy_layer(layer);
         panic("Invalid Layer", NEURC_ALLOC_ERROR);
@@ -75,6 +78,8 @@ void destroy_layer(Layer *layer)
     if(layer->stored_input) mat_destroy(layer->stored_input);
     if(layer->pre_activation) mat_destroy(layer->pre_activation);
     if(layer->post_activation) mat_destroy(layer->post_activation);
+    if(layer->delta) mat_destroy(layer->delta);
+
     free(layer);
 }
 
@@ -117,6 +122,9 @@ void print_layer(Layer *layer)
     printf("Post Activation:\n\t");
     mat_print(layer->post_activation);
     printf("--------------------------------------------------------------------\n");
+    printf("Delta:\n\t");
+    mat_print(layer->delta);
+    printf("--------------------------------------------------------------------\n");
 
 }
 
@@ -132,5 +140,17 @@ void forward(Layer *layer, const Matrix *input)
 
     if (layer->activation_type == SOFTMAX) softmax_func(layer->post_activation);
     else map(layer->post_activation, layer->activation_function);
+
+}
+
+void backward(Layer *layer, Matrix *gradient)
+{   
+    assert_created_layer(layer);
+    assert_matrix_is_allocated(gradient);
+    assert_matrix_size(gradient, layer->batch_size, layer->output_count);
+   
+    mat_copy(layer->pre_activation, layer->delta);
+    map(layer->delta, layer->derivative_function);
+    hadamard(layer->delta, gradient);
 
 }

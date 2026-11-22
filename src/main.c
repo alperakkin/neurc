@@ -25,11 +25,12 @@ int main()
     forward(layer, input);
     
     
-    print_layer(layer);
     m_double loss = mean_square_error(layer->post_activation, target);
     print_loss(loss); 
     gradient_loss(layer->post_activation, target, gradient);
+    backward(layer, gradient);
     mat_print(gradient);
+    print_layer(layer);
 
 
 
@@ -37,6 +38,7 @@ int main()
     destroy_layer(layer);
     mat_destroy(input);
     mat_destroy(target);
+    mat_destroy(gradient);
 
     return NEURC_OK;
 }
