@@ -18,6 +18,7 @@ int main()
 
     Matrix *input = mat_create(1, 2, inp_arr);
     Matrix *target = mat_create(1, 1, target_arr);
+    Matrix * gradient = mat_create(target->row_size, target->col_size, NULL);
     Layer *layer = create_layer(2, 1, 1, SIGMOID);
     
 
@@ -27,6 +28,8 @@ int main()
     print_layer(layer);
     m_double loss = mean_square_error(layer->post_activation, target);
     print_loss(loss); 
+    gradient_loss(layer->post_activation, target, gradient);
+    mat_print(gradient);
 
 
 
