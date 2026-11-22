@@ -9,7 +9,7 @@
 int main()
 {
 
-    seed(0);
+    seed(42);
     m_double inp_arr[2] = {
         0.9, 0.2
     };
@@ -30,8 +30,9 @@ int main()
     print_loss(loss); 
     gradient_loss(layer->post_activation, target, gradient);
     backward(layer, gradient);
+    update(layer, 0.51);
  
-    print_layer(layer, false);
+    print_layer(layer, true);
 
 
 

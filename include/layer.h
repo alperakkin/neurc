@@ -36,6 +36,7 @@ void print_layer(const Layer *layer, int show_matrices);
 
 void forward(Layer *layer, const Matrix *input);
 void backward(Layer *layer, Matrix *gradient);
+void update(const Layer *layer, m_double learning_rate);
 
 
 #endif

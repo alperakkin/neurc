@@ -206,6 +206,12 @@ void print_layer(const Layer *layer, int show_matrices)
 
         printf(ANSI_YELLOW ANSI_BOLD "\n▸ Delta:\n" ANSI_RESET);
         mat_print(layer->delta);
+        printf(ANSI_DIM ANSI_BOLD "\n▸ dW:\n" ANSI_RESET);
+        mat_print(layer->dW);
+        printf(ANSI_DIM ANSI_BOLD "\n▸ dB:\n" ANSI_RESET);
+        mat_print(layer->dB);
+        printf(ANSI_DIM ANSI_BOLD "\n▸ dX:\n" ANSI_RESET);
+        mat_print(layer->dX);
     }
 
     printf(ANSI_DIM "════════════════════════════════════════════════════════════════════════════════\n\n" ANSI_RESET);
@@ -303,7 +309,14 @@ void backward(Layer *layer, Matrix *gradient)
     compute_weights_gradient(layer);
     compute_bias_gradient(layer);
     compute_input_gradient(layer);
-    
  
+}
 
+void update(const Layer *layer, m_double learning_rate)
+{
+    mat_multiply_scalar(layer->dW, learning_rate);
+    mat_sub(layer->weights, layer->dW);
+
+    mat_multiply_scalar(layer->dB, learning_rate);
+    mat_sub(layer->bias, layer->dB);
 }
