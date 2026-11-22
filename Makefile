@@ -1,6 +1,9 @@
 CC        = gcc
 CFLAGS    = -Wall -Wextra -O2 -Iinclude -MMD -MP
+LDFLAGS   =
 LDLIBS    = -lm
+
+DEBUG_FLAGS = -Wall -Wextra -g -O1 -fsanitize=address -fno-omit-frame-pointer -Iinclude -MMD -MP
 
 SRC_DIR   = src
 BUILD_DIR = build
@@ -15,7 +18,7 @@ BIN   = $(BUILD_DIR)/neurc
 all: $(BIN)
 
 $(BIN): $(BUILD_DIR)/main.o $(LIB)
-	$(CC) $< $(LIB) $(LDLIBS) -o $@
+	$(CC) $(LDFLAGS) $< $(LIB) $(LDLIBS) -o $@
 
 $(LIB): $(OBJS)
 	ar rcs $@ $^
@@ -29,9 +32,17 @@ $(BUILD_DIR):
 run: $(BIN)
 	./$(BIN)
 
+# Debug hedefleri
+debug: CFLAGS  = $(DEBUG_FLAGS)
+debug: LDFLAGS = -fsanitize=address
+debug: clean all
+
+debug-run: debug
+	./$(BIN)
+
 clean:
 	rm -rf $(BUILD_DIR)
 
 -include $(DEPS)
 
-.PHONY: all run clean
+.PHONY: all run debug debug-run clean

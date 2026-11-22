@@ -4,6 +4,7 @@
 #include "loss.h"
 #include "utils.h"
 #include <stdio.h>
+#include <stdbool.h>
 
 int main()
 {
@@ -29,8 +30,8 @@ int main()
     print_loss(loss); 
     gradient_loss(layer->post_activation, target, gradient);
     backward(layer, gradient);
-    mat_print(gradient);
-    print_layer(layer);
+ 
+    print_layer(layer, false);
 
 
 

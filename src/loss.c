@@ -18,6 +18,8 @@ m_double mean_square_error(Matrix *output, Matrix *target)
     return (double)total_loss/get_size(output);
 }
 
+
+
 void gradient_loss(Matrix *output, Matrix *target, Matrix *gradient)
 {
     assert_matrix_is_allocated(output);
