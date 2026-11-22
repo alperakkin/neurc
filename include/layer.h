@@ -1,10 +1,13 @@
 #ifndef NEURC_LAYER_H
 #define NEURC_LAYER_H
 
+#define FORWARD_TRANING 0
+#define FORWARD_PREDICT 1
 #include <stddef.h>
 #include "matrix.h"
 #include "errors.h"
 #include "activation.h"
+#include <stdbool.h>
 
 
 
@@ -32,7 +35,7 @@ void assign_activation(Layer *layer);
 void assert_created_layer(Layer *layer);
 void destroy_layer(Layer *layer);
 
-void forward(Layer *layer, const Matrix *input);
+void forward(Layer *layer, const Matrix *input, bool prediction);
 void backward(Layer *layer, Matrix *gradient);
 void update(const Layer *layer, m_double learning_rate);
 

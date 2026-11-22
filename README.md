@@ -122,7 +122,7 @@ int main(void)
     }
 
     printf("Prediction:\n");
-    mat_print(output_layer->post_activation);
+    mat_print_limit(output_layer->post_activation, input->row_size);
 
     // Explicit cleanup
     destroy_layer(input_layer);

@@ -156,32 +156,90 @@ void print_layer(const Layer *layer, size_t epoch, size_t total_epochs, m_double
         print_matrix_summary("Grad dX",         layer->dX,              ANSI_DIM);
     } else {
         printf(ANSI_MAGENTA ANSI_BOLD "\n▸ Weights:\n" ANSI_RESET);
-        mat_print(layer->weights);
+        mat_print_limit(layer->weights, MAT_PRINT_ALL);
 
         printf(ANSI_MAGENTA ANSI_BOLD "\n▸ Bias:\n" ANSI_RESET);
-        mat_print(layer->bias);
+        mat_print_limit(layer->bias, MAT_PRINT_ALL);
 
         printf(ANSI_CYAN ANSI_BOLD "\n▸ Pre-Activation:\n" ANSI_RESET);
-        mat_print(layer->pre_activation);
+        mat_print_limit(layer->pre_activation, MAT_PRINT_ALL);
 
         printf(ANSI_CYAN ANSI_BOLD "\n▸ Post-Activation:\n" ANSI_RESET);
-        mat_print(layer->post_activation);
+        mat_print_limit(layer->post_activation, MAT_PRINT_ALL);
 
         printf(ANSI_YELLOW ANSI_BOLD "\n▸ Delta:\n" ANSI_RESET);
-        mat_print(layer->delta);
+        mat_print_limit(layer->delta, MAT_PRINT_ALL);
 
         printf(ANSI_DIM ANSI_BOLD "\n▸ dW:\n" ANSI_RESET);
-        mat_print(layer->dW);
+        mat_print_limit(layer->dW, MAT_PRINT_ALL);
 
         printf(ANSI_DIM ANSI_BOLD "\n▸ dB:\n" ANSI_RESET);
-        mat_print(layer->dB);
+        mat_print_limit(layer->dB, MAT_PRINT_ALL);
 
         printf(ANSI_DIM ANSI_BOLD "\n▸ dX:\n" ANSI_RESET);
-        mat_print(layer->dX);
+        mat_print_limit(layer->dX, MAT_PRINT_ALL);
     }
 
     printf(ANSI_DIM "════════════════════════════════════════════════════════════════════════════════\n" ANSI_RESET);
     
    
     fflush(stdout);
+}
+
+
+void mat_print_limit(const Matrix *m, size_t max_rows)
+{
+    if (m == NULL) {
+        printf(ANSI_RED "[Matrix: NULL]\n" ANSI_RESET);
+        return;
+    }
+
+    if (m->data == NULL) {
+        printf(ANSI_RED "[Matrix: Empty Data (%zux%zu)]\n" ANSI_RESET, m->row_size, m->col_size);
+        return;
+    }
+
+    
+    size_t rows_to_show = (max_rows == 0 || max_rows >= m->row_size) ? m->row_size : max_rows;
+    size_t omitted_rows = m->row_size - rows_to_show;
+
+    
+    printf(ANSI_CYAN ANSI_BOLD "Matrix " ANSI_RESET ANSI_DIM "(%zu x %zu)" ANSI_RESET,
+           m->row_size, m->col_size);
+    
+    if (omitted_rows > 0) {
+        printf(ANSI_YELLOW "  [Showing first %zu of %zu rows]" ANSI_RESET, rows_to_show, m->row_size);
+    }
+    printf("\n");
+
+    printf(ANSI_DIM "┌\n" ANSI_RESET);
+
+    for (size_t row = 0; row < rows_to_show; row++) {
+        printf(ANSI_DIM "│ " ANSI_RESET);
+
+        for (size_t col = 0; col < m->col_size; col++) {
+            double val = (double)m->data[m->col_size * row + col];
+
+            
+            if (isnan(val) || isinf(val)) {
+                printf(ANSI_RED ANSI_BOLD "%9.4f " ANSI_RESET, val);
+            } else if (fabs(val) < 1e-6) {
+                printf(ANSI_DIM "%9.4f " ANSI_RESET, val);        
+            } else if (val > 0.85) {
+                printf(ANSI_GREEN ANSI_BOLD "%9.4f " ANSI_RESET, val); 
+            } else if (val < 0.0) {
+                printf(ANSI_YELLOW "%9.4f " ANSI_RESET, val);     
+            } else {
+                printf("%9.4f ", val);
+            }
+        }
+        printf("\n");
+    }
+
+    
+    if (omitted_rows > 0) {
+        printf(ANSI_DIM "│   ... (%zu more rows omitted) ...\n" ANSI_RESET, omitted_rows);
+    }
+
+    printf(ANSI_DIM "└\n" ANSI_RESET);
 }

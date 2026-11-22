@@ -4,6 +4,7 @@
 #include "activation.h"
 #include "loss.h"
 #include <stdlib.h>
+#include <stdbool.h>
 
 
 
@@ -94,11 +95,11 @@ void destroy_layer(Layer *layer)
 }
 
 
-void forward(Layer *layer, const Matrix *input)
+void forward(Layer *layer, const Matrix *input, bool prediction)
 {
     if(layer == NULL || input == NULL) panic("Forward Pass", NEURC_ALLOC_ERROR);
     assert_matrix_size(input, input->row_size, layer->input_count);
-    if(input->row_size != layer->batch_size) panic("Input row size not matched with batch size", NEURC_INCORRECT_SHAPE);
+    if(!prediction && input->row_size != layer->batch_size) panic("Input row size not matched with batch size", NEURC_INCORRECT_SHAPE);
     mat_copy(input, layer->stored_input);
     matmul(layer->stored_input, layer->weights, layer->pre_activation);
     add_bias(layer->pre_activation, layer->bias);

@@ -38,8 +38,8 @@ int main()
     for(size_t epoch=0; epoch<EPOCHS; epoch++)
     {
         
-    forward(input_layer, input);
-    forward(output_layer, input_layer->post_activation);
+    forward(input_layer, input, FORWARD_TRANING);
+    forward(output_layer, input_layer->post_activation, FORWARD_TRANING);
     m_double loss = mean_square_error(output_layer->post_activation, target);
     gradient_loss(output_layer->post_activation, target, gradient);
     backward(output_layer, gradient);
@@ -52,7 +52,7 @@ int main()
 
 
     printf("Prediction:\n");
-    mat_print(output_layer->post_activation);
+    mat_print_limit(output_layer->post_activation, input->row_size);
 
     //cleanup
     destroy_layer(input_layer);

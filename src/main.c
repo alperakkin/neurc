@@ -1,13 +1,10 @@
 
+#include <string.h>
 #include "errors.h"
-#include "layer.h"
-#include "loss.h"
 #include "utils.h"
-#include "dashboard.h"
-#include <stdio.h>
-#include <stdbool.h>
+#include "network.h"
 
-#define EPOCHS  15000
+#define EPOCHS  250000
 #define LR 0.3
 #define HIDDEN_LAYERS 10
 
@@ -31,36 +28,27 @@ int main()
 
     Matrix *input = mat_create(4, 2, inp_arr);
     Matrix *target = mat_create(4, 1, target_arr);
-    Matrix * gradient = mat_create(target->row_size, target->col_size, NULL);
-    Layer *input_layer = create_layer(2, HIDDEN_LAYERS, 4, SIGMOID);
-    Layer *output_layer = create_layer(HIDDEN_LAYERS, 1, 4, SIGMOID);
+
+
+    Network *network = create_network(4);
+    add_layer(network,(Shape){.input=2,  .output=10}, SIGMOID);
+    add_layer(network,(Shape){.input=10, .output=1}, SIGMOID);
+
+    train(network, input, target, EPOCHS, LR);
+
+    m_double q_arr[4] = {
+        0.5, 0.5,
+        1.0, 0.9
+
+    
+    };
+    Matrix *q = mat_create(2, 2, q_arr);
+    predict(network, q);
+    destroy_network(network);
+   
     
 
-    for(size_t epoch=0; epoch<EPOCHS; epoch++)
-    {
-        
-    forward(input_layer, input);
-    forward(output_layer, input_layer->post_activation);
-    m_double loss = mean_square_error(output_layer->post_activation, target);
-    gradient_loss(output_layer->post_activation, target, gradient);
-    backward(output_layer, gradient);
-    backward(input_layer,output_layer->dX);
-    update(input_layer, LR);
-    update(output_layer,LR);
+
  
-    print_layer(output_layer, epoch,EPOCHS, loss, false);
-    }
-
-
-    printf("Prediction:\n");
-    mat_print(output_layer->post_activation);
-
-    //cleanup
-    destroy_layer(input_layer);
-    destroy_layer(output_layer);
-    mat_destroy(input);
-    mat_destroy(target);
-    mat_destroy(gradient);
-
     return NEURC_OK;
 }

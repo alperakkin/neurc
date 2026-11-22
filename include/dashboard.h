@@ -16,11 +16,11 @@
 #define ANSI_YELLOW  "\x1b[33m"
 #define ANSI_MAGENTA "\x1b[35m"
 #define ANSI_RED     "\x1b[31m"
+#define MAT_PRINT_ALL 0
 
 void training_ui_init(void);
 void training_ui_finish(void);
-static void print_progress_bar(size_t current_epoch, size_t total_epochs);
 void print_activation_type(Activations type);
 void print_layer(const Layer *layer, size_t epoch, size_t total_epochs, m_double loss, int show_matrices);
-
+void mat_print_limit(const Matrix *m, size_t max_rows);
 #endif
