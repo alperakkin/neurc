@@ -35,9 +35,7 @@ A lightweight neural network library written from scratch in pure C.
 
 Live terminal dashboard tracking layer shapes, activation statistics, gradient health, and loss convergence while solving the XOR problem:
 
-<p align="center">
-  <img src="resources/traninig.png" alt="neurc live training dashboard on XOR problem" width="750">
-</p>
+![neurc live training dashboard on XOR problem](resources/traninig.png)
 
 ---
 
