@@ -34,6 +34,7 @@ void mat_copy(const Matrix *src, Matrix *dest)
 {
     assert_matrix_is_allocated(src);
     if(dest == NULL) panic("Copy Matrix", NEURC_ALLOC_ERROR);
+    assert_matrixes_have_identical_shape(src, dest);
     memcpy(dest->data, src->data, sizeof(m_double)*src->col_size*src->row_size);
   
 
@@ -118,7 +119,7 @@ uint32_t get_size(const Matrix *m)
 m_double get_element(const Matrix *m, uint32_t row, uint32_t col)
 {
     assert_matrix_is_allocated(m);
-    if(row > m->row_size || col > m->col_size) panic("Get Matrix Element", NEURC_INCORRECT_SHAPE);
+    if(row >= m->row_size || col >= m->col_size)panic("Get Matrix Element", NEURC_INCORRECT_SHAPE);
 
 
     return m->data[m->col_size * row + col];
@@ -127,7 +128,7 @@ m_double get_element(const Matrix *m, uint32_t row, uint32_t col)
 void set_element(m_double value, Matrix *m, uint32_t row, uint32_t col)
 {
     assert_matrix_is_allocated(m);
-    if(row > m->row_size || col > m->col_size) panic("Set Matrix Element", NEURC_INCORRECT_SHAPE);
+    if(row >= m->row_size || col >= m->col_size) panic("Set Matrix Element", NEURC_INCORRECT_SHAPE);
     m->data[row * m->col_size + col] = value;
 
 }
@@ -264,4 +265,19 @@ void add_bias(Matrix *m, Matrix *b)
     
 
 
+}
+
+void mat_slice_rows(const Matrix *src, Matrix *dest, uint32_t start_row, uint32_t row_count)
+{
+    assert_matrix_is_allocated(src);
+    assert_matrix_is_allocated(dest);
+    if (src->col_size != dest->col_size) panic("Slice Matrix Cols", NEURC_INCORRECT_SHAPE);
+    if (start_row + row_count > src->row_size || row_count > dest->row_size) 
+        panic("Slice Matrix Bounds", NEURC_INCORRECT_SIZE);
+
+    memcpy(
+        dest->data,
+        src->data + (start_row * src->col_size),
+        sizeof(m_double) * row_count * src->col_size
+    );
 }

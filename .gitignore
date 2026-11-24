@@ -1,3 +1,6 @@
 data/
 build/
 .vscode/
+*.csv
+*.neurcexamples/mnist/*.csv
+.DS_Store

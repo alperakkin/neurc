@@ -32,34 +32,34 @@ int main()
     Matrix *target = mat_create(4, 1, target_arr);
 
 
-    // Network *network = create_network();
-    // add_layer(network,(Shape){.input=2,  .output=10}, SIGMOID);
-    // add_layer(network,(Shape){.input=10, .output=1}, SIGMOID);
-    // set_batch_size(network, 4);
+    Network *network = create_network();
+    add_layer(network,(Shape){.input=2,  .output=10}, SIGMOID);
+    add_layer(network,(Shape){.input=10, .output=1}, SIGMOID);
+    set_batch_size(network, 4);
 
 
-    // train(network, input, target, EPOCHS, LR);
+    train(network, input, target, EPOCHS, LR);
 
     m_double q_arr[4] = {
-        0.5, 0.5,
+        0.1, 0.7,
         1.0, 0.9
 
     
     };
     Matrix *q = mat_create(2, 2, q_arr);
-    // printf("Trained\n");
-    // predict(network, q);
-    // save_model("data/xor", network);
-    // destroy_network(network);
+    printf("Trained\n");
+    predict(network, q);
+    save_model("data/xor", network);
+    destroy_network(network);
     
     
     
-    Network *loaded_net = load_model("data/xor");
-    set_batch_size(loaded_net, 4);
+    // Network *loaded_net = load_model("data/xor");
+    // set_batch_size(loaded_net, 4);
     
-    printf("PreTrained\n");
-    predict(loaded_net, q);
-    destroy_network(loaded_net);
+    // printf("PreTrained\n");
+    // predict(loaded_net, q);
+    // destroy_network(loaded_net);
    
     
 

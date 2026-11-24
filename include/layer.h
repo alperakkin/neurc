@@ -37,6 +37,7 @@ void assert_created_layer(Layer *layer);
 void destroy_layer(Layer *layer);
 
 void forward(Layer *layer, const Matrix *input, bool prediction);
+void update(const Layer *layer, m_double learning_rate);
 void backward(Layer *layer, Matrix *gradient);
 void update(const Layer *layer, m_double learning_rate);
 

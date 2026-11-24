@@ -108,20 +108,6 @@ void destroy_layer(Layer *layer)
 }
 
 
-void forward(Layer *layer, const Matrix *input, bool prediction)
-{
-    if(layer == NULL || input == NULL) panic("Forward Pass", NEURC_ALLOC_ERROR);
-    assert_matrix_size(input, input->row_size, layer->input_count);
-    if(!prediction && input->row_size != layer->batch_size) panic("Input row size not matched with batch size", NEURC_INCORRECT_SHAPE);
-    mat_copy(input, layer->stored_input);
-    matmul(layer->stored_input, layer->weights, layer->pre_activation);
-    add_bias(layer->pre_activation, layer->bias);
-    mat_copy(layer->pre_activation,layer->post_activation);
-
-    if (layer->activation_type == SOFTMAX) softmax_func(layer->post_activation);
-    else map(layer->post_activation, layer->activation_function);
-
-}
 
 void compute_weights_gradient(const Layer *layer)
 {
@@ -188,6 +174,44 @@ void compute_bias_gradient(const Layer *layer)
         set_element(sum, layer->dB, 0, col);
     }
 }
+
+void forward(Layer *layer, const Matrix *input, bool prediction)
+{
+    if (layer == NULL || input == NULL) panic("Forward Pass", NEURC_ALLOC_ERROR);
+    assert_matrix_size(input, input->row_size, layer->input_count);
+
+    
+    if (prediction && input->row_size != layer->batch_size) {
+        layer_resize_batch(layer, input->row_size);
+    }
+
+    if (!prediction && input->row_size != layer->batch_size) {
+        panic("Input row size not matched with batch size", NEURC_INCORRECT_SHAPE);
+    }
+
+    mat_copy(input, layer->stored_input);
+    matmul(layer->stored_input, layer->weights, layer->pre_activation);
+    add_bias(layer->pre_activation, layer->bias);
+    mat_copy(layer->pre_activation, layer->post_activation);
+
+    if (layer->activation_type == SOFTMAX) softmax_func(layer->post_activation);
+    else map(layer->post_activation, layer->activation_function);
+}
+
+void update(const Layer *layer, m_double learning_rate)
+{
+    
+    m_double scaled_lr = learning_rate / (m_double)layer->batch_size;
+
+    mat_multiply_scalar(layer->dW, scaled_lr);
+    mat_sub(layer->weights, layer->dW);
+
+    mat_multiply_scalar(layer->dB, scaled_lr);
+    mat_sub(layer->bias, layer->dB);
+}
+
+
+
 void backward(Layer *layer, Matrix *gradient)
 {   
     assert_created_layer(layer);
@@ -204,11 +228,3 @@ void backward(Layer *layer, Matrix *gradient)
  
 }
 
-void update(const Layer *layer, m_double learning_rate)
-{
-    mat_multiply_scalar(layer->dW, learning_rate);
-    mat_sub(layer->weights, layer->dW);
-
-    mat_multiply_scalar(layer->dB, learning_rate);
-    mat_sub(layer->bias, layer->dB);
-}

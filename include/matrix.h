@@ -44,4 +44,5 @@ void matmul(const Matrix *a, const Matrix *b, Matrix *result);
 void transpose(const Matrix *a, Matrix *result);
 void map(Matrix *m, m_double (*func)(m_double));
 void add_bias(Matrix *m, Matrix *b);
+void mat_slice_rows(const Matrix *src, Matrix *dest, uint32_t start_row, uint32_t row_count);
 #endif
