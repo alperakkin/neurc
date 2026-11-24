@@ -38,24 +38,24 @@ double derive_relu_func(double val)
 
 void softmax_func(Matrix *m)
 {
-    for (size_t row=0; row< m->row_size; row++)
+    for (uint32_t row=0; row< m->row_size; row++)
     {
         double sum_of_row = 0.0;
         double max_row = get_element(m,row,0);
-        for (size_t col=0; col< m->col_size; col++)
+        for (uint32_t col=0; col< m->col_size; col++)
         {
             double element = get_element(m, row, col);
             if (element > max_row) max_row = element;
         }   
 
-        for (size_t col=0; col< m->col_size; col++)
+        for (uint32_t col=0; col< m->col_size; col++)
         {
             double element = get_element(m, row, col);
             set_element(exp(element - max_row), m, row, col);
             sum_of_row += get_element(m, row, col);
         }  
         
-        for (size_t col=0; col< m->col_size; col++)
+        for (uint32_t col=0; col< m->col_size; col++)
         {
             double element = get_element(m, row, col);
             set_element(element/sum_of_row, m, row, col);

@@ -21,6 +21,6 @@
 void training_ui_init(void);
 void training_ui_finish(void);
 void print_activation_type(Activations type);
-void print_layer(const Layer *layer, size_t epoch, size_t total_epochs, m_double loss, int show_matrices);
-void mat_print_limit(const Matrix *m, size_t max_rows);
+void print_layer(const Layer *layer, uint32_t epoch, uint32_t total_epochs, m_double loss, int show_matrices);
+void mat_print_limit(const Matrix *m, uint32_t max_rows);
 #endif

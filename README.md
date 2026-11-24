@@ -102,7 +102,7 @@ int main(void)
     Layer *input_layer  = create_layer(2, HIDDEN_NEURONS, 4, SIGMOID);
     Layer *output_layer = create_layer(HIDDEN_NEURONS, 1, 4, SIGMOID);
 
-    for (size_t epoch = 0; epoch < EPOCHS; epoch++) {
+    for (uint32_t epoch = 0; epoch < EPOCHS; epoch++) {
         // Forward pass
         forward(input_layer, input);
         forward(output_layer, input_layer->post_activation);

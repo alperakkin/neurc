@@ -35,7 +35,7 @@ int main()
     Layer *output_layer = create_layer(HIDDEN_LAYERS, 1, 4, SIGMOID);
     
 
-    for(size_t epoch=0; epoch<EPOCHS; epoch++)
+    for(uint32_t epoch=0; epoch<EPOCHS; epoch++)
     {
         
     forward(input_layer, input, FORWARD_TRANING);

@@ -10,13 +10,13 @@
 void print_size(char* name, const Matrix *m)
 {
     if(m == NULL) return;
-    printf("%s Shape: (%zu, %zu)\n", name, m->row_size, m->col_size);
+    printf("%s Shape: (%u, %u)\n", name, m->row_size, m->col_size);
 }
-Matrix *mat_create(size_t rows, size_t cols,const m_double *data)
+Matrix *mat_create(uint32_t rows, uint32_t cols,const m_double *data)
 {
 
     if(rows==0 || cols==0) panic("Create Matrix", NEURC_INCORRECT_SHAPE); 
-    if (rows * cols > SIZE_MAX) panic("Create Matrix", NEURC_INCORRECT_SIZE);
+    if (rows * cols > UINT32_MAX) panic("Create Matrix", NEURC_INCORRECT_SIZE);
        
     Matrix *matrix = calloc(1, sizeof(Matrix));
     if (matrix == NULL) panic("Create Matrix:", NEURC_ALLOC_ERROR);
@@ -43,14 +43,14 @@ void fill(Matrix *m, double val)
 {
     assert_matrix_is_allocated(m);
 
-    for(size_t index=0; index < get_size(m); index++)
+    for(uint32_t index=0; index < get_size(m); index++)
         m->data[index] = val;
     
 }
 void random_fill(Matrix *m, m_double min, m_double max)
 {
     assert_matrix_is_allocated(m);
-    for(size_t index=0; index < get_size(m); index++){
+    for(uint32_t index=0; index < get_size(m); index++){
 
     
 
@@ -65,7 +65,7 @@ void random_fill(Matrix *m, m_double min, m_double max)
 
 void mat_destroy(Matrix *m)
 {
-    if(m == NULL)  panic("Destroy Matrix", NEURC_ALLOC_ERROR);
+    if(m == NULL)  return;
     free(m->data);
     free(m);
 
@@ -76,11 +76,11 @@ void mat_print(const Matrix *m)
       if(m == NULL)  return;
   
 
-      printf("Shape: (%zux%zu)\n", m->row_size, m->col_size);
+      printf("Shape: (%ux%u)\n", m->row_size, m->col_size);
       printf("--------------------------------------------\n");
       printf("[\n");
-      for(size_t row=0; row<m->row_size; row++){
-        for(size_t col=0; col<m->col_size; col++){
+      for(uint32_t row=0; row<m->row_size; row++){
+        for(uint32_t col=0; col<m->col_size; col++){
             printf("\t%f", m->data[m->col_size * row + col]);
         }
         printf("\n");
@@ -104,18 +104,18 @@ void assert_matmul_shapes(const Matrix * a, const Matrix *b)
     if (a->col_size != b->row_size) panic("Assert Matrix Matmul Shape", NEURC_MATMUL_NOT_MATCHED);
 }
 
-void assert_matrix_size(const Matrix *m , size_t row, size_t col)
+void assert_matrix_size(const Matrix *m , uint32_t row, uint32_t col)
 {
     if (m->col_size != col || m->row_size != row) panic("Assert Matrix Size", NEURC_INCORRECT_SIZE);
 }
-size_t get_size(const Matrix *m)
+uint32_t get_size(const Matrix *m)
 {
     assert_matrix_is_allocated(m);
 
     return m->col_size * m->row_size;
 }
 
-m_double get_element(const Matrix *m, size_t row, size_t col)
+m_double get_element(const Matrix *m, uint32_t row, uint32_t col)
 {
     assert_matrix_is_allocated(m);
     if(row > m->row_size || col > m->col_size) panic("Get Matrix Element", NEURC_INCORRECT_SHAPE);
@@ -124,7 +124,7 @@ m_double get_element(const Matrix *m, size_t row, size_t col)
     return m->data[m->col_size * row + col];
 
 }
-void set_element(m_double value, Matrix *m, size_t row, size_t col)
+void set_element(m_double value, Matrix *m, uint32_t row, uint32_t col)
 {
     assert_matrix_is_allocated(m);
     if(row > m->row_size || col > m->col_size) panic("Set Matrix Element", NEURC_INCORRECT_SHAPE);
@@ -137,7 +137,7 @@ void mat_add(Matrix *a, const Matrix *b)
     assert_matrix_is_allocated(b);
     assert_matrixes_have_identical_shape(a, b);
 
-    for(size_t index=0; index < get_size(a); index++)
+    for(uint32_t index=0; index < get_size(a); index++)
     {
         a->data[index] += b->data[index];
     }
@@ -151,7 +151,7 @@ void mat_sub(Matrix *a, const Matrix *b)
     assert_matrix_is_allocated(b);
     assert_matrixes_have_identical_shape(a, b);
 
-    for(size_t index=0; index < get_size(a); index++)
+    for(uint32_t index=0; index < get_size(a); index++)
     {
         a->data[index] -= b->data[index];
     }
@@ -161,7 +161,7 @@ void mat_sub(Matrix *a, const Matrix *b)
 void mat_add_scalar(Matrix *a,  m_double s)
 {
     assert_matrix_is_allocated(a);
-    for(size_t index=0; index < get_size(a); index++)
+    for(uint32_t index=0; index < get_size(a); index++)
     {
         a->data[index] += s;
     }
@@ -170,7 +170,7 @@ void mat_add_scalar(Matrix *a,  m_double s)
 void mat_sub_scalar(Matrix *a,  m_double s)
 {
     assert_matrix_is_allocated(a);
-    for(size_t index=0; index < get_size(a); index++)
+    for(uint32_t index=0; index < get_size(a); index++)
     {
         a->data[index] -= s;
     }
@@ -179,7 +179,7 @@ void mat_sub_scalar(Matrix *a,  m_double s)
 void mat_multiply_scalar(Matrix *a,  m_double s)
 {
     assert_matrix_is_allocated(a);
-    for(size_t index=0; index < get_size(a); index++)
+    for(uint32_t index=0; index < get_size(a); index++)
     {
         a->data[index] *= s;
     }
@@ -191,7 +191,7 @@ void hadamard(Matrix *a, const Matrix *b)
     assert_matrix_is_allocated(b);
     assert_matrixes_have_identical_shape(a, b);
    
-    for(size_t index=0; index < get_size(a); index++)
+    for(uint32_t index=0; index < get_size(a); index++)
     {
         a->data[index] *= b->data[index];
     }
@@ -202,12 +202,12 @@ void matmul(const Matrix *a, const Matrix *b, Matrix *result)
     assert_matmul_shapes(a, b);
     assert_matrix_size(result, a->row_size, b->col_size);
 
-    for (size_t row=0; row<result->row_size; row++)
+    for (uint32_t row=0; row<result->row_size; row++)
     {
-        for (size_t col=0; col<result->col_size; col++)
+        for (uint32_t col=0; col<result->col_size; col++)
         {
             m_double dot_product = 0.0; 
-            for (size_t k=0; k< a->col_size; k++)
+            for (uint32_t k=0; k< a->col_size; k++)
             {
                 dot_product += get_element(a, row, k) * get_element(b, k, col);
             }
@@ -225,9 +225,9 @@ void transpose(const Matrix *a, Matrix *result)
     assert_matrix_is_allocated(result);
     assert_matrix_size(a, result->col_size, result->row_size);
 
-    for(size_t row=0; row<a->row_size; row++)
+    for(uint32_t row=0; row<a->row_size; row++)
     {
-        for(size_t col=0; col<a->col_size; col++)
+        for(uint32_t col=0; col<a->col_size; col++)
         {
             
             set_element(get_element(a, row, col), result, col, row);
@@ -240,7 +240,7 @@ void transpose(const Matrix *a, Matrix *result)
 void map(Matrix *m, m_double (*func)(m_double))
 {
     assert_matrix_is_allocated(m);
-    for(size_t index=0; index<get_size(m); index++)
+    for(uint32_t index=0; index<get_size(m); index++)
         m->data[index] = func(m->data[index]);
     
 }
@@ -251,9 +251,9 @@ void add_bias(Matrix *m, Matrix *b)
     assert_matrix_is_allocated(b);
     assert_matrix_size(b, 1, m->col_size);
 
-    for(size_t row=0; row<m->row_size; row++)
+    for(uint32_t row=0; row<m->row_size; row++)
     {
-        for(size_t col=0; col<m->col_size; col++)
+        for(uint32_t col=0; col<m->col_size; col++)
         {
             m_double biased = get_element(m, row, col) + get_element(b, 0, col);
            

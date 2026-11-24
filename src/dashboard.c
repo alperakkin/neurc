@@ -46,13 +46,13 @@ static void print_matrix_summary(const char *label, const Matrix *m, const char 
         return;
     }
 
-    size_t total = m->row_size * m->col_size;
+    uint32_t total = m->row_size * m->col_size;
     double min_v = m->data[0];
     double max_v = m->data[0];
     double sum   = 0.0;
     int has_nan  = 0;
 
-    for (size_t i = 0; i < total; i++) {
+    for (uint32_t i = 0; i < total; i++) {
         double val = m->data[i];
         if (isnan(val) || isinf(val)) has_nan = 1;
         if (val < min_v) min_v = val;
@@ -76,7 +76,7 @@ static void print_matrix_summary(const char *label, const Matrix *m, const char 
 }
 
 
-static void print_progress_bar(size_t current_epoch, size_t total_epochs) {
+static void print_progress_bar(uint32_t current_epoch, uint32_t total_epochs) {
     const int bar_width = 36;
     double progress = (total_epochs > 0) ? (double)current_epoch / (double)total_epochs : 0.0;
     if (progress > 1.0) progress = 1.0;
@@ -91,11 +91,11 @@ static void print_progress_bar(size_t current_epoch, size_t total_epochs) {
             printf(ANSI_DIM "░");
         }
     }
-    printf(ANSI_RESET ANSI_CYAN "] " ANSI_BOLD ANSI_YELLOW "%5.1f%%" ANSI_RESET " (%zu/%zu)\n",
+    printf(ANSI_RESET ANSI_CYAN "] " ANSI_BOLD ANSI_YELLOW "%5.1f%%" ANSI_RESET " (%u/%u)\n",
            progress * 100.0, current_epoch, total_epochs);
 }
 
-void print_layer(const Layer *layer, size_t epoch, size_t total_epochs, m_double loss, int show_matrices)
+void print_layer(const Layer *layer, uint32_t epoch, uint32_t total_epochs, m_double loss, int show_matrices)
 {
     if (!layer) {
         printf(ANSI_RED "[Error: NULL Layer]\n" ANSI_RESET);
@@ -110,7 +110,7 @@ void print_layer(const Layer *layer, size_t epoch, size_t total_epochs, m_double
    
     printf(ANSI_CURSOR_HOME);
 
-    size_t total_params = (layer->input_count * layer->output_count) + layer->output_count;
+    uint32_t total_params = (layer->input_count * layer->output_count) + layer->output_count;
 
   
     printf(ANSI_CYAN ANSI_BOLD "╭──────────────────────────────────────────────────────────────────────────────╮\n");
@@ -122,7 +122,7 @@ void print_layer(const Layer *layer, size_t epoch, size_t total_epochs, m_double
         printf(ANSI_YELLOW "%-12.6f" ANSI_CYAN, (double)loss);
     }
 
-    printf(" │ Shape: (%zu ──▶ %zu) │ Params: %-9zu │\n",
+    printf(" │ Shape: (%u ──▶ %u) │ Params: %-9zu │\n",
            layer->input_count, layer->output_count, total_params);
     printf("╰──────────────────────────────────────────────────────────────────────────────╯\n" ANSI_RESET);
 
@@ -140,7 +140,7 @@ void print_layer(const Layer *layer, size_t epoch, size_t total_epochs, m_double
         default:      printf(ANSI_RED   "%-10s" ANSI_RESET, "Undefined"); break;
     }
 
-    printf(" │  " ANSI_BOLD "Batch Size : " ANSI_RESET ANSI_YELLOW "%zu\n" ANSI_RESET, layer->batch_size);
+    printf(" │  " ANSI_BOLD "Batch Size : " ANSI_RESET ANSI_YELLOW "%u\n" ANSI_RESET, layer->batch_size);
     printf(ANSI_DIM "  ────────────────────────────────────────────────────────────────────────────\n" ANSI_RESET);
 
     if (!show_matrices) {
@@ -187,7 +187,7 @@ void print_layer(const Layer *layer, size_t epoch, size_t total_epochs, m_double
 }
 
 
-void mat_print_limit(const Matrix *m, size_t max_rows)
+void mat_print_limit(const Matrix *m, uint32_t max_rows)
 {
     if (m == NULL) {
         printf(ANSI_RED "[Matrix: NULL]\n" ANSI_RESET);
@@ -195,29 +195,29 @@ void mat_print_limit(const Matrix *m, size_t max_rows)
     }
 
     if (m->data == NULL) {
-        printf(ANSI_RED "[Matrix: Empty Data (%zux%zu)]\n" ANSI_RESET, m->row_size, m->col_size);
+        printf(ANSI_RED "[Matrix: Empty Data (%ux%u)]\n" ANSI_RESET, m->row_size, m->col_size);
         return;
     }
 
     
-    size_t rows_to_show = (max_rows == 0 || max_rows >= m->row_size) ? m->row_size : max_rows;
-    size_t omitted_rows = m->row_size - rows_to_show;
+    uint32_t rows_to_show = (max_rows == 0 || max_rows >= m->row_size) ? m->row_size : max_rows;
+    uint32_t omitted_rows = m->row_size - rows_to_show;
 
     
-    printf(ANSI_CYAN ANSI_BOLD "Matrix " ANSI_RESET ANSI_DIM "(%zu x %zu)" ANSI_RESET,
+    printf(ANSI_CYAN ANSI_BOLD "Matrix " ANSI_RESET ANSI_DIM "(%u x %u)" ANSI_RESET,
            m->row_size, m->col_size);
     
     if (omitted_rows > 0) {
-        printf(ANSI_YELLOW "  [Showing first %zu of %zu rows]" ANSI_RESET, rows_to_show, m->row_size);
+        printf(ANSI_YELLOW "  [Showing first %u of %u rows]" ANSI_RESET, rows_to_show, m->row_size);
     }
     printf("\n");
 
     printf(ANSI_DIM "┌\n" ANSI_RESET);
 
-    for (size_t row = 0; row < rows_to_show; row++) {
+    for (uint32_t row = 0; row < rows_to_show; row++) {
         printf(ANSI_DIM "│ " ANSI_RESET);
 
-        for (size_t col = 0; col < m->col_size; col++) {
+        for (uint32_t col = 0; col < m->col_size; col++) {
             double val = (double)m->data[m->col_size * row + col];
 
             
@@ -238,7 +238,7 @@ void mat_print_limit(const Matrix *m, size_t max_rows)
 
     
     if (omitted_rows > 0) {
-        printf(ANSI_DIM "│   ... (%zu more rows omitted) ...\n" ANSI_RESET, omitted_rows);
+        printf(ANSI_DIM "│   ... (%u more rows omitted) ...\n" ANSI_RESET, omitted_rows);
     }
 
     printf(ANSI_DIM "└\n" ANSI_RESET);

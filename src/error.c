@@ -6,7 +6,7 @@
 void panic(const char* function_name, ErrorTypes err)
 {
     fprintf(stderr, "\033[31m\n");
-    fprintf(stderr, "Error in %s: ", function_name); 
+    fprintf(stderr, "Error ["); 
 
     switch (err)
     {
@@ -24,12 +24,15 @@ void panic(const char* function_name, ErrorTypes err)
         break;
     case NEURC_MATMUL_NOT_MATCHED:
         fprintf(stderr, "Matrix columns not matched for MATMUL operations");
-        break;   
+        break;  
+    case NEURC_FILE_ERROR:
+        fprintf(stderr, "File operation not allowed");
+        break;
     default:
         fprintf(stderr, "Undefined Error");
         break;
     }
-    
+    fprintf(stderr, "]: %s", function_name); 
     fprintf(stderr, "\033[0m\n");
     exit(err);
 }

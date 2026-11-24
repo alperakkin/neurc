@@ -2,7 +2,7 @@
 #include <time.h>
 #include "utils.h"
 
-void seed(size_t value)
+void seed(uint32_t value)
 {
     unsigned int seed_val = (unsigned int)time(NULL);
     if (value) seed_val = (unsigned int) value;

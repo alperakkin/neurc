@@ -9,6 +9,8 @@ typedef enum {
     NEURC_MATMUL_NOT_MATCHED,
     NEURC_INCORRECT_SIZE,
     NEURC_INCORRECT_ARGS,
+    NEURC_TYPE_ERROR,
+    NEURC_FILE_ERROR
     
 } ErrorTypes;
 

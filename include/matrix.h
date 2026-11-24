@@ -2,21 +2,22 @@
 
 #define NEURC_MATRIX_H
 
-#include "errors.h"
+
+#include <stdint.h>
 
 
 typedef double m_double;
 
 typedef struct {
     m_double *data; //  col_size * i + j
-    size_t row_size;
-    size_t col_size;
+    uint32_t row_size;
+    uint32_t col_size;
 } Matrix;
 
 
 
 
-Matrix *mat_create(size_t rows, size_t cols, const m_double* data);
+Matrix *mat_create(uint32_t rows, uint32_t cols, const m_double* data);
 
 void mat_destroy(Matrix *matrix);
 void mat_copy(const Matrix *src, Matrix *dest);
@@ -25,10 +26,10 @@ void print_size(char *name, const Matrix *m);
 void fill(Matrix *m, double val);
 void random_fill(Matrix *m, m_double min, m_double max);
 
-m_double get_element(const Matrix *m, size_t row, size_t col);
-void set_element(m_double value, Matrix *m, size_t row, size_t col);
-size_t get_size(const Matrix *m);
-void assert_matrix_size(const Matrix *m , size_t row, size_t col);
+m_double get_element(const Matrix *m, uint32_t row, uint32_t col);
+void set_element(m_double value, Matrix *m, uint32_t row, uint32_t col);
+uint32_t get_size(const Matrix *m);
+void assert_matrix_size(const Matrix *m , uint32_t row, uint32_t col);
 void assert_matrix_is_allocated(const Matrix *m);
 void assert_matrixes_have_identical_shape(const Matrix *a, const Matrix *b);
 void assert_matmul_shapes(const Matrix * a, const Matrix *b);

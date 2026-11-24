@@ -5,16 +5,28 @@
 #include "layer.h"
 #include "loss.h"
 #include "dashboard.h"
+#include "errors.h"
 
-Network *create_network(size_t batch_size)
+Network *create_network()
 {
     Network *network = calloc(1, sizeof(Network));
     if (!network) return NULL;
 
-    network->batch_size = batch_size;
+    network->batch_size = 0;
     network->length = 0;
+    network->epoch_size=0;
     network->layers = NULL; 
+
     return network;
+}
+
+void set_batch_size(Network *network, uint32_t batch_size)
+{   if(network->length==0) panic("Add layers before setting batch size", NEURC_ALLOC_ERROR);
+    
+    for(uint32_t index=0; index<network->length; index++)
+    {
+        layer_resize_batch(network->layers[index], batch_size);
+    }
 }
 
 void add_layer(Network *network, Shape shape, Activations activation)
@@ -33,7 +45,6 @@ void add_layer(Network *network, Shape shape, Activations activation)
     network->layers[network->length] = create_layer(
         shape.input,
         shape.output,
-        network->batch_size,
         activation
     );
 
@@ -50,7 +61,7 @@ void destroy_network(Network *network)
     if (!network) return;
 
    
-    for (size_t i = 0; i < network->length; i++) {
+    for (uint32_t i = 0; i < network->length; i++) {
         destroy_layer(network->layers[i]);
     }
 
@@ -62,18 +73,18 @@ void destroy_network(Network *network)
 }
 
 
-void train(Network *network, Matrix *input, Matrix *target, size_t epoch_size, m_double learning_rate)
+void train(Network *network, Matrix *input, Matrix *target, uint32_t epoch_size, m_double learning_rate)
 {
 
 
     Matrix * gradient = mat_create(target->row_size, target->col_size, NULL);
-    
+    network->epoch_size = epoch_size;
 
-    for(size_t epoch=0; epoch<epoch_size; epoch++)
+    for(uint32_t epoch=0; epoch<epoch_size; epoch++)
     {
         
         // Forward Pass
-        for(size_t index=0; index<network->length; index++)
+        for(uint32_t index=0; index<network->length; index++)
         {
             if(index==0) // input_layer
             forward(network->layers[index], input, FORWARD_TRANING);
@@ -86,7 +97,7 @@ void train(Network *network, Matrix *input, Matrix *target, size_t epoch_size, m
         m_double loss = mean_square_error(network->layers[network->length-1]->post_activation, target);
         network->loss = loss;
         // Back Propagation
-        for(size_t index=network->length; index-->0; )
+        for(uint32_t index=network->length; index-->0; )
         {
             if(index==network->length-1) // output layer
             backward(network->layers[index], gradient);
@@ -119,7 +130,7 @@ void predict(Network *network, Matrix *input)
 {
 
      // Forward Pass
-        for(size_t index=0; index<network->length; index++)
+        for(uint32_t index=0; index<network->length; index++)
         {
             if(index==0) // input_layer
             forward(network->layers[index], input, FORWARD_PREDICT);
